@@ -1,7 +1,7 @@
 # Pokémon image classifier
 
 This project builds a 1,025-class Pokémon image classifier and exports it as
-an ONNX model suitable for CPU inference and Android integration. It includes:
+an ONNX model suitable for CPU inference and [Android integration](https://github.com/Sutadasuto/pokedex_android). It includes:
 
 - a provenance-aware image collector for National Pokédex species 1–1025;
 - fine-tuning code for a PyTorch/timm DenseNet121 classifier;
