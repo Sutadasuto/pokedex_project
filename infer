@@ -1,0 +1,103 @@
+import numpy as np
+from PIL import Image
+
+import tensorflow as tf
+
+tf.compat.v1.disable_eager_execution()
+
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.applications import EfficientNetB0
+
+# =========================================================
+# CONFIG
+# =========================================================
+
+IMAGE_SIZE = (224, 224)
+
+WEIGHTS_PATH = "pokedex_weights.h5"
+
+LABELS_PATH = "labels.txt"
+
+IMAGE_PATH = r"C:\Users\rodri\Documents\dev\pokedex_project\pokedex_data\0006_charizard\0006_charizard_official-artwork_front_shiny.png"
+
+TOP_K = 5
+
+# =========================================================
+# LOAD LABELS
+# =========================================================
+
+with open(LABELS_PATH, "r", encoding="utf-8") as f:
+    class_names = [line.strip() for line in f.readlines()]
+
+num_classes = len(class_names)
+
+print(f"Loaded {num_classes} classes")
+
+# =========================================================
+# BUILD MODEL
+# =========================================================
+
+inputs = keras.Input(shape=(224, 224, 3))
+
+# IMPORTANT:
+# NO manual rescaling here
+
+base_model = EfficientNetB0(
+    include_top=False,
+    weights=None,
+    input_tensor=inputs
+)
+
+base_model.trainable = False
+
+x = layers.GlobalAveragePooling2D()(base_model.output)
+
+x = layers.Dropout(0.3)(x)
+
+outputs = layers.Dense(
+    num_classes,
+    activation="softmax"
+)(x)
+
+model = keras.Model(inputs, outputs)
+
+# =========================================================
+# LOAD WEIGHTS
+# =========================================================
+
+model.load_weights(WEIGHTS_PATH)
+
+print("Weights loaded")
+
+# =========================================================
+# LOAD IMAGE
+# =========================================================
+
+img = Image.open(IMAGE_PATH).convert("RGB")
+
+img = img.resize(IMAGE_SIZE)
+
+# IMPORTANT:
+# Keep uint8-style scale [0,255]
+img_array = np.array(img, dtype=np.float32)
+
+img_array = np.expand_dims(img_array, axis=0)
+
+# =========================================================
+# PREDICT
+# =========================================================
+
+predictions = model.predict(img_array)[0]
+
+top_indices = np.argsort(predictions)[::-1][:TOP_K]
+
+print("\nTop predictions:\n")
+
+for idx in top_indices:
+
+    class_name = class_names[idx]
+
+    confidence = predictions[idx] * 100
+
+    print(f"{class_name:<30} {confidence:.2f}%")

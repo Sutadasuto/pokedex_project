@@ -1,0 +1,56 @@
+# Secrets and local credentials
+brave_api_key.txt
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local datasets and downloaded media
+pokedex_data/
+.dataset_generator_brave_png/
+dataset_manifest.csv
+*.sqlite
+*.db
+*.jpg
+*.jpeg
+*.png
+*.webp
+!charizard_1.jpg
+!README*.png
+
+# Trained model binaries and framework checkpoints
+*.h5
+*.hdf5
+*.pth
+*.onnx
+*.keras
+*.safetensors
+
+# Generated evaluation and experiment output
+onnx_test_split/
+checkpoints/
+runs/
+outputs/
+logs/
+
+# Python and tooling caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment and editor files
+.venv/
+venv/
+env/
+.conda/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# Local environment smoke test with machine-specific configuration
+tf_test.py
